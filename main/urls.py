@@ -4,6 +4,7 @@ from .views import other_page
 from .views import BBLoginView, BBLogoutView
 from .views import profile
 from .views import ChangeUserInfoView
+from .views import BBPasswordChangeView
 
 app_name = 'main'
 urlpatterns = [
@@ -13,4 +14,5 @@ urlpatterns = [
     path('accounts/profile/change/', ChangeUserInfoView.as_view(), name='profile_change'),
     path('accounts/profile/', profile, name='profile'),
     path('accounts/logout/', BBLogoutView.as_view(), name='logout'),
+    path('accounts/password/change/', BBPasswordChangeView.as_view(), name='password_change')
 ]
