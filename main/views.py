@@ -14,11 +14,13 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.views import PasswordChangeView
 from .models import AdvUser
 from .forms import ChangeUserInfoForm
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, DeleteView
 from .forms import RegisterUserForm
 from django.views.generic.base import TemplateView
 from django.core.signing import BadSignature
 from .utilities import signer
+from django.contrib.auth import logout
+from django.contrib import messages
 
 
 def index(request):
@@ -92,6 +94,32 @@ def user_activate(request, sign):
         user.is_activated = True
         user.save()
     return render(request, template)
+
+
+
+class DeleteUserView(LoginRequiredMixin, DeleteView):
+    model = AdvUser
+    template_name = 'main/delete_user.html'
+    success_url = reverse_lazy('main:index')
+
+    def setup(self, request, *args, **kwargs):
+        self.user_id = request.user.pk
+        return super().setup(request, *args, **kwargs)
+
+
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        messages.add_message(request, messages.SUCCESS, 'Пользователь удален')
+        return super().post(request, *args, **kwargs)
+
+
+    def get_object(self, queryset=None):
+        if not queryset:
+            queryset = self.get_queryset()
+        return get_object_or_404(queryset, pk=self.user_id)
+
+
+
 
 
 
